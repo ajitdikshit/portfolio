@@ -1022,6 +1022,8 @@ footer {
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
   transition: transform 0.2s, background-color 0.2s;
+  /* NEW: Adds the glowing float effect */
+  animation: floatPulse 3s infinite ease-in-out; 
 }
 
 .chatbot-toggle:hover {
@@ -1039,6 +1041,8 @@ footer {
   flex-direction: column;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   overflow: hidden;
+  /* NEW: Adds the springy entry animation */
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .chatbot-header {
@@ -1084,6 +1088,8 @@ footer {
   border-radius: 12px;
   font-size: 0.9rem;
   line-height: 1.4;
+  /* NEW: Adds the slide-up effect for every new message */
+  animation: slideUpMessage 0.3s ease-out forwards;
 }
 
 .ai-bubble {
@@ -1103,6 +1109,8 @@ footer {
 .typing {
   font-style: italic;
   opacity: 0.7;
+  /* NEW: Overrides the standard bubble animation with a pulse */
+  animation: pulseText 1.5s infinite ease-in-out;
 }
 
 .chatbot-input-area {
