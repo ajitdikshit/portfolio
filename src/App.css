@@ -838,3 +838,165 @@ footer {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+/* =========================================
+   Live Stats Dashboard
+   ========================================= */
+.stats-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  background-color: #111;
+  padding: 3rem;
+  border-radius: 16px;
+  border: 1px solid #1e293b;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.stat-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.4rem;
+  color: #e2e8f0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 0.8rem;
+}
+
+.stat-icon-img {
+  width: 24px;
+  height: 24px;
+  filter: invert(1); /* Makes the dark GitHub icon white */
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background-color: #050505;
+  border: 1px solid #1e293b;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: #2563eb;
+}
+
+.stat-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.2rem;
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* LeetCode Specific Coloring */
+.highlight-stat .stat-number { color: #2563eb; } /* Total */
+.easy-stat .stat-number { color: #00b8a3; } /* Easy (Cyan/Green) */
+.medium-stat .stat-number { color: #ffc01e; } /* Medium (Yellow) */
+.hard-stat .stat-number { color: #ff375f; } /* Hard (Red) */
+
+@media (max-width: 600px) {
+  .stats-dashboard { padding: 2rem 1.5rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+/* =========================================
+   Contact Form Layout
+   ========================================= */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  background-color: #111;
+  padding: 4rem;
+  border-radius: 16px;
+  border: 1px solid #1e293b;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.contact-subtitle {
+  color: #94a3b8;
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.contact-links-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  background-color: #050505;
+  border: 1px solid #1e293b;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.submit-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 1.2rem;
+  font-size: 1.05rem;
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    padding: 2.5rem 1.5rem;
+    gap: 3rem;
+  }
+}
