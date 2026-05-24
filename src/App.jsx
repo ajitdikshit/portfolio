@@ -28,20 +28,16 @@ const TypewriterText = ({ text, speed = 120 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
-const [projects, setProjects] = useState([]);
-
   useEffect(() => {
-    const fetchData = async () => {
-      // 1. Fetch Stats (Keep your existing stats logic here...)
-      
-      // 2. Fetch Projects from Supabase
-      const { data, error } = await supabase.from('projects').select('*');
-      if (error) console.error("Error fetching projects:", error);
-      else setProjects(data);
-    };
-    
-    fetchData();
-  }, []);
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, speed);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, text, speed]);
+
   return (
     <span className="typewriter-container">
       {displayedText}
@@ -166,6 +162,26 @@ function App() {
   // Live Stats Fetching Effect
  // Live Stats Fetching Effect
   // Live Stats Fetching Effect
+  // State for our live database projects
+  const [dbProjects, setDbProjects] = useState([]);
+
+  // Fetch projects from Supabase when the page loads
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('id', { ascending: true }); // Keeps them in the right order
+
+      if (error) {
+        console.error("Error fetching database projects:", error);
+      } else {
+        setDbProjects(data);
+      }
+    };
+
+    fetchProjects();
+  }, []);
   useEffect(() => {
     const fetchLiveStats = async () => {
       try {
@@ -426,15 +442,27 @@ function App() {
 
       {/* Projects Section */}
       <div className="projects-grid">
-  {projects.map((project) => (
+  {dbProjects.map((project) => (
     <div className="project-card" key={project.id}>
       <div className="project-header">
         <h3>{project.title}</h3>
       </div>
       <p className="project-desc">{project.description}</p>
+      
+      {/* Map the PostgreSQL array of tags into nice CSS badges */}
+      <div className="project-tags">
+        {project.tags && project.tags.map((tag, idx) => (
+          <span key={idx} className="tag">{tag}</span>
+        ))}
+      </div>
+
       <div className="project-links">
-        <a href={project.live_demo_url} target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
-        <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub Repo</a>
+        {project.live_demo_url && (
+          <a href={project.live_demo_url} target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
+        )}
+        {project.github_url && (
+          <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub</a>
+        )}
       </div>
     </div>
   ))}
