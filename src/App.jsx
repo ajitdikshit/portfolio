@@ -440,9 +440,7 @@ function App() {
           </div>
         </div>
       </section>
-<pre style={{ color: 'white', background: 'black', padding: '20px' }}>
-  {JSON.stringify(dbProjects, null, 2)}
-</pre>
+
       {/* Projects Section */}
       <div className="projects-grid">
   {dbProjects.map((project) => (
