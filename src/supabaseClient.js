@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://pgwiztqlvsvdjztszhss.supabase.co'; 
-// Paste the copied eyJ key here. No spaces inside the quotes!
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnd2l6dHFsdnN2ZGp6dHN6aHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjUyMjYsImV4cCI6MjA5NTIwMTIyNn0.b-fDmEvUGnbXY1kg4yGXvyCToDL2ZWTkCDWFyHctOFc'; 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
