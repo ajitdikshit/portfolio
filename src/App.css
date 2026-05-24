@@ -1152,3 +1152,45 @@ footer {
     bottom: 5vw;
   }
 }
+/* =========================================
+   Chatbot Animations (Keyframes)
+   ========================================= */
+
+/* Springy pop-in for the main window */
+@keyframes popIn {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.85) translateY(20px); 
+    transform-origin: bottom right;
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+    transform-origin: bottom right;
+  }
+}
+
+/* Smooth slide-up for new messages */
+@keyframes slideUpMessage {
+  0% { 
+    opacity: 0; 
+    transform: translateY(15px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Gentle glowing pulse for the toggle button */
+@keyframes floatPulse {
+  0% { box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); transform: translateY(0); }
+  50% { box-shadow: 0 4px 25px rgba(37, 99, 235, 0.8); transform: translateY(-3px); }
+  100% { box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); transform: translateY(0); }
+}
+
+/* Fading pulse for the typing indicator */
+@keyframes pulseText {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
