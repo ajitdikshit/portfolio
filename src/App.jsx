@@ -168,17 +168,18 @@ function App() {
   // Fetch projects from Supabase when the page loads
   useEffect(() => {
     const fetchProjects = async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('id', { ascending: true }); // Keeps them in the right order
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('id', { ascending: true });
 
-      if (error) {
-        console.error("Error fetching database projects:", error);
-      } else {
-        setDbProjects(data);
-      }
-    };
+  if (error) {
+    console.error("Error:", error);
+  } else {
+    console.log("Projects loaded from DB:", data); // THIS IS THE KEY
+    setDbProjects(data);
+  }
+};
 
     fetchProjects();
   }, []);
