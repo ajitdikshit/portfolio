@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from './supabaseClient';
 import './App.css';
 import { Analytics } from "@vercel/analytics/react"
 // --- Assets ---
@@ -27,16 +28,20 @@ const TypewriterText = ({ text, speed = 120 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + text[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
-      }, speed);
-      return () => clearTimeout(timeout);
-    }
-  }, [currentIndex, text, speed]);
+const [projects, setProjects] = useState([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      // 1. Fetch Stats (Keep your existing stats logic here...)
+      
+      // 2. Fetch Projects from Supabase
+      const { data, error } = await supabase.from('projects').select('*');
+      if (error) console.error("Error fetching projects:", error);
+      else setProjects(data);
+    };
+    
+    fetchData();
+  }, []);
   return (
     <span className="typewriter-container">
       {displayedText}
@@ -420,58 +425,20 @@ function App() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="section projects-section">
-        <h2 className="section-title">My Projects</h2>
-        <div className="projects-grid">
-          
-          <div className="project-card highlight-card-grade">
-            <div className="project-header">
-              <h3>AVANA</h3>
-              <span className="grade-badge">S Grade Project</span>
-            </div>
-            <p className="project-desc">A PWA comprising gardening tips, advice, and a CNN that detects common plant diseases prevailing in Indian crops.</p>
-            <div className="project-links">
-              <a href="https://ajitdikshit.github.io/AVANA/" target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
-              <a href="https://github.com/ajitdikshit/AVANA" target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub Repo</a>
-            </div>
-          </div>
-
-          <div className="project-card">
-            <div className="project-header">
-              <h3>TourEast</h3>
-            </div>
-            <p className="project-desc">An Android app crafted to boost tourism in eastern India. Features API integrations like NDMA SACHET and provides live navigation.</p>
-            <div className="project-links">
-              <a href="https://ajitdikshit.github.io/toureastapp/" target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
-              <a href="https://github.com/ajitdikshit/toureastapp" target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub Repo</a>
-            </div>
-          </div>
-          
-          <div className="project-card highlight-card-award">
-            <div className="project-header">
-              <h3>ChoreUs</h3>
-              <span className="award-badge">🏆 2nd Prize Winner</span>
-            </div>
-            <p className="project-desc">A household management application built during the SolVIT Hackathon. Tracks live inventory while ChoreUs AI provides dish suggestions based on available items.</p>
-            <div className="project-links">
-              <a href="https://ajitdikshit.github.io/ChoreUs/" target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
-              <a href="https://github.com/ajitdikshit/ChoreUs" target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub Repo</a>
-            </div>
-          </div>
-
-          <div className="project-card">
-            <div className="project-header">
-              <h3>ApexRush</h3>
-            </div>
-            <p className="project-desc">A responsive 2-player Unity arcade racing game developed with C#, focusing on custom raycast-based car controllers and precise physics.</p>
-            <div className="project-links">
-              <a href="https://www.linkedin.com/posts/ajit-dikshit-b4b4b8343_apexrushzip-activity-7385675723048488960-7cpi" target="_blank" rel="noopener noreferrer" className="btn-outline">Watch Demo</a>
-              <a href="https://github.com/ajitdikshit/ApexRush" target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub Repo</a>
-            </div>
-          </div>
-          
-        </div>
-      </section>
+      <div className="projects-grid">
+  {projects.map((project) => (
+    <div className="project-card" key={project.id}>
+      <div className="project-header">
+        <h3>{project.title}</h3>
+      </div>
+      <p className="project-desc">{project.description}</p>
+      <div className="project-links">
+        <a href={project.live_demo_url} target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
+        <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub Repo</a>
+      </div>
+    </div>
+  ))}
+</div>
 
       {/* Certifications Section */}
       <section id="certifications" className="section cert-section">
