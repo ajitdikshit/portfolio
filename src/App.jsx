@@ -44,7 +44,88 @@ const TypewriterText = ({ text, speed = 120 }) => {
     </span>
   );
 };
+// --- AI Chatbot Component ---
+const Chatbot = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { text: "Hi! I'm Ajit's AI assistant. Ask me anything about his skills, projects, or experience!", isUser: false }
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = React.useRef(null);
 
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const userMsg = input;
+    setMessages((prev) => [...prev, { text: userMsg, isUser: true }]);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      // Calling our secure Vercel Serverless Function
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMsg }),
+      });
+      const data = await res.json();
+      
+      setMessages((prev) => [
+        ...prev,
+        { text: data.reply || "Sorry, I encountered an error.", isUser: false },
+      ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        { text: "Connection error. Please try again.", isUser: false },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="chatbot-container">
+      {isOpen && (
+        <div className="chatbot-window">
+          <div className="chatbot-header">
+            <h4>🤖 Ajit's AI Assistant</h4>
+            <button onClick={() => setIsOpen(false)} className="close-chat">×</button>
+          </div>
+          <div className="chatbot-messages">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`chat-bubble ${msg.isUser ? "user-bubble" : "ai-bubble"}`}>
+                {msg.text}
+              </div>
+            ))}
+            {isLoading && <div className="chat-bubble ai-bubble typing">Typing...</div>}
+            <div ref={messagesEndRef} />
+          </div>
+          <form className="chatbot-input-area" onSubmit={handleSend}>
+            <input 
+              type="text" 
+              value={input} 
+              onChange={(e) => setInput(e.target.value)} 
+              placeholder="Ask me something..." 
+            />
+            <button type="submit" disabled={isLoading || !input.trim()}>➔</button>
+          </form>
+        </div>
+      )}
+      {!isOpen && (
+        <button className="chatbot-toggle" onClick={() => setIsOpen(true)}>
+          💬 Ask AI
+        </button>
+      )}
+    </div>
+  );
+};
 // --- Main App Component ---
 function App() {
   // ==========================================
@@ -532,6 +613,8 @@ function App() {
           </div>
         </div>
       </footer>
+     {/* Render the Chatbot here so it floats on top of everything! */}
+      <Chatbot />
 
     </div>
   );
