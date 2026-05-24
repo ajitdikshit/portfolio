@@ -441,33 +441,37 @@ function App() {
         </div>
       </section>
 
-      {/* Projects Section */}
-      <div className="projects-grid">
-  {dbProjects.map((project) => (
-    <div className="project-card" key={project.id}>
-      <div className="project-header">
-        <h3>{project.title}</h3>
-      </div>
-      <p className="project-desc">{project.description}</p>
-      
-      {/* Map the PostgreSQL array of tags into nice CSS badges */}
-      <div className="project-tags">
-        {project.tags && project.tags.map((tag, idx) => (
-          <span key={idx} className="tag">{tag}</span>
-        ))}
-      </div>
+     {/* Projects Section */}
+<section id="projects" className="projects-section">
+  <h2 className="section-title">Projects</h2>
+  
+  <div className="projects-grid">
+    {dbProjects.map((project) => (
+      <div className="project-card" key={project.id}>
+        <div className="project-header">
+          <h3>{project.title}</h3>
+        </div>
+        <p className="project-desc">{project.description}</p>
+        
+        {/* Map the PostgreSQL array of tags into nice CSS badges */}
+        <div className="project-tags">
+          {project.tags && project.tags.map((tag, idx) => (
+            <span key={idx} className="tag">{tag}</span>
+          ))}
+        </div>
 
-      <div className="project-links">
-        {project.live_demo_url && (
-          <a href={project.live_demo_url} target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
-        )}
-        {project.github_url && (
-          <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub</a>
-        )}
+        <div className="project-links">
+          {project.live_demo_url && (
+            <a href={project.live_demo_url} target="_blank" rel="noopener noreferrer" className="btn-outline">Live Demo</a>
+          )}
+          {project.github_url && (
+            <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="btn-secondary">GitHub</a>
+          )}
+        </div>
       </div>
-    </div>
-  ))}
-</div>
+    ))}
+  </div>
+</section>
 
       {/* Certifications Section */}
       <section id="certifications" className="section cert-section">

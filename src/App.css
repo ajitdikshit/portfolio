@@ -1202,3 +1202,18 @@ footer {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tag {
+  background-color: #1e293b;
+  color: #38bdf8;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
