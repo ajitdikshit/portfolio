@@ -10,6 +10,32 @@ import emailIcon from './email.png';
 import linkedinIcon from './linkedin.png';
 import githubIcon from './github.png';
 
+// State for the Contact Form
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formStatus, setFormStatus] = useState(''); // 'idle', 'submitting', 'success', 'error'
+
+  // Handle form submission
+  const handleSendMessage = async (e) => {
+    e.preventDefault(); // Prevents the page from refreshing
+    setFormStatus('submitting');
+
+    const { error } = await supabase
+      .from('messages')
+      .insert([
+        { name: formData.name, email: formData.email, message: formData.message }
+      ]);
+
+    if (error) {
+      console.error("Error sending message:", error);
+      setFormStatus('error');
+    } else {
+      setFormStatus('success');
+      setFormData({ name: '', email: '', message: '' }); // Clear the form
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => setFormStatus('idle'), 3000); 
+    }
+  };
 // --- Certificate Data Array ---
 const certificatesData = [
   { id: 1, title: 'Core Java', img: 'https://github.com/ajitdikshit/portfolio/blob/main/src/assets/java.png?raw=true', desc: 'Mastered object-oriented programming concepts, multithreading, and standard libraries.' },
@@ -545,67 +571,49 @@ function App() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      {/* Contact Section */}
-      <section id="contact" className="section contact-section">
-        <h2 className="section-title">Get In Touch</h2>
-        <div className="contact-layout">
-          
-          <div className="contact-info-column">
-            <p className="contact-subtitle">
-              I am currently looking for new opportunities and open to collaborating on interesting projects. Whether you have a question or just want to say hi, my inbox is always open!
-            </p>
-            <div className="contact-links-vertical">
-              <a href="mailto:your.email@example.com" className="contact-link-card">
-                <img src={emailIcon} alt="Email" className="contact-custom-icon" />
-                <div>
-                  <span className="link-title">Email</span>
-                  <span className="link-detail">Send me a direct email</span>
-                </div>
-              </a>
-              <a href="https://www.linkedin.com/in/ajit-dikshit-b4b4b8343/" target="_blank" rel="noopener noreferrer" className="contact-link-card">
-                <img src={linkedinIcon} alt="LinkedIn" className="contact-custom-icon" />
-                <div>
-                  <span className="link-title">LinkedIn</span>
-                  <span className="link-detail">Let's connect</span>
-                </div>
-              </a>
-              <a href="https://github.com/ajitdikshit" target="_blank" rel="noopener noreferrer" className="contact-link-card">
-                <img src={githubIcon} alt="GitHub" className="contact-custom-icon" />
-                <div>
-                  <span className="link-title">GitHub</span>
-                  <span className="link-detail">View my code</span>
-                </div>
-              </a>
-            </div>
-          </div>
+{/* Contact Section */}
+<section id="contact" className="contact-section" style={{ padding: '4rem 2rem', maxWidth: '600px', margin: '0 auto' }}>
+  <h2 className="section-title">Get In Touch</h2>
+  <p style={{ color: '#94a3b8', marginBottom: '2rem' }}>Currently open for new opportunities. Send me a message and I'll get back to you!</p>
 
-          <div className="contact-form-column">
-            <form className="contact-form" onSubmit={handleFormSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input type="text" id="name" name="name" required value={formData.name} onChange={handleInputChange} placeholder="John Doe" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input type="email" id="email" name="email" required value={formData.email} onChange={handleInputChange} placeholder="john@example.com" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="message">Message</label>
-                <textarea id="message" name="message" required rows="5" value={formData.message} onChange={handleInputChange} placeholder="Hi Ajit, I'd like to talk about..."></textarea>
-              </div>
-              
-              <button type="submit" className="btn-primary submit-btn" disabled={formStatus === 'submitting'}>
-                {formStatus === 'idle' && 'Send Message'}
-                {formStatus === 'submitting' && 'Sending...'}
-                {formStatus === 'success' && 'Message Sent! ✓'}
-                {formStatus === 'error' && 'Error. Try Again.'}
-              </button>
-            </form>
-          </div>
+  <form onSubmit={handleSendMessage} className="contact-form" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <input 
+      type="text" 
+      placeholder="Your Name" 
+      required 
+      value={formData.name}
+      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+      style={{ padding: '0.8rem', borderRadius: '6px', border: '1px solid #334155', background: '#1e293b', color: 'white' }}
+    />
+    <input 
+      type="email" 
+      placeholder="Your Email" 
+      required 
+      value={formData.email}
+      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+      style={{ padding: '0.8rem', borderRadius: '6px', border: '1px solid #334155', background: '#1e293b', color: 'white' }}
+    />
+    <textarea 
+      placeholder="Your Message" 
+      required 
+      rows="5"
+      value={formData.message}
+      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+      style={{ padding: '0.8rem', borderRadius: '6px', border: '1px solid #334155', background: '#1e293b', color: 'white', resize: 'vertical' }}
+    ></textarea>
 
-        </div>
-      </section>
+    <button 
+      type="submit" 
+      disabled={formStatus === 'submitting'}
+      style={{ padding: '1rem', borderRadius: '6px', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+    >
+      {formStatus === 'submitting' ? 'Sending...' : 'Send Message'}
+    </button>
+
+    {formStatus === 'success' && <p style={{ color: '#4ade80', textAlign: 'center' }}>Message sent successfully!</p>}
+    {formStatus === 'error' && <p style={{ color: '#f87171', textAlign: 'center' }}>Something went wrong. Please try again.</p>}
+  </form>
+</section>
       
       {/* Footer */}
       <footer>
