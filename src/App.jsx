@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import './App.css';
 import { Analytics } from "@vercel/analytics/react"
-import './AdminPanel.css'; // Add this near your other imports
-// --- Assets ---
+import './AdminPanel.css'; 
+
 import profilePic from './portfolio.jpg';
 import hackathonMain from './hackathon2.jpg';
 import hackathonCert from './hackathon.jpg';
@@ -12,8 +12,6 @@ import linkedinIcon from './linkedin.png';
 import githubIcon from './github.png';
 import toast, { Toaster } from 'react-hot-toast';
 
-
-// --- Certificate Data Array ---
 const certificatesData = [
   { id: 1, title: 'Core Java', img: 'https://github.com/ajitdikshit/portfolio/blob/main/src/assets/java.png?raw=true', desc: 'Mastered object-oriented programming concepts, multithreading, and standard libraries.' },
   { id: 2, title: 'NPTEL: Cloud Computing', img: 'https://github.com/ajitdikshit/portfolio/blob/main/src/assets/cld.png?raw=true', desc: 'Gained a solid understanding of cloud architectures, virtualization, and deployment.' },
@@ -26,7 +24,6 @@ const certificatesData = [
   { id: 9, title: 'Udemy: HTML, CSS, JS', img: 'https://github.com/ajitdikshit/portfolio/blob/main/src/assets/html.png?raw=true', desc: 'Built a strong foundation in frontend web design and responsive user interfaces.' }
 ];
 
-// --- Custom Typewriter Component ---
 const TypewriterText = ({ text, speed = 120 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -48,7 +45,7 @@ const TypewriterText = ({ text, speed = 120 }) => {
     </span>
   );
 };
-// --- AI Chatbot Component ---
+
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -72,7 +69,6 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      // Calling our secure Vercel Serverless Function
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,10 +126,7 @@ const Chatbot = () => {
     </div>
   );
 };
-// --- Admin Panel Component ---
-// --- Admin Panel Component ---
-// --- Admin Panel Component ---
-// --- Admin Panel Component ---
+
 const AdminPanel = () => {
   const [session, setSession] = useState(null);
   const [email, setEmail] = useState('');
@@ -244,7 +237,6 @@ const AdminPanel = () => {
 
       <div className="admin-grid">
         
-        {/* Left Column: Messages Inbox */}
         <div>
           <h3 style={{ marginBottom: '1rem' }}>Inbox ({messages.length})</h3>
           <div className="scrollable-list">
@@ -263,7 +255,6 @@ const AdminPanel = () => {
           </div>
         </div>
 
-        {/* Right Column: Projects Management */}
         <div>
           <h3 style={{ marginBottom: '1rem' }}>Add New Project</h3>
           <form onSubmit={handleAddProject} className="admin-form">
@@ -279,7 +270,6 @@ const AdminPanel = () => {
             </button>
           </form>
 
-          {/* Existing Projects List */}
           <h3 style={{ marginBottom: '1rem' }}>Manage Projects ({projects.length})</h3>
           <div className="scrollable-list" style={{ maxHeight: '40vh' }}>
             {projects.map(proj => (
@@ -302,26 +292,20 @@ const AdminPanel = () => {
     </div>
   );
 };
-// --- Main App Component ---
+
 function App() {
   
-  // ==========================================
-  // USERNAMES FOR LIVE STATS:
-  // ==========================================
   const GITHUB_USERNAME = "ajitdikshit"; 
   const LEETCODE_USERNAME = "Ajit_Dikshit";
 
-  // UI States
   const [scrollY, setScrollY] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [zoomedCert, setZoomedCert] = useState(null);
 
-  // Live Stats States
   const [githubStats, setGithubStats] = useState({ repos: 0, followers: 0 });
   const [leetcodeStats, setLeetcodeStats] = useState({ solved: 0, easy: 0, medium: 0, hard: 0 });
   const [statsLoading, setStatsLoading] = useState(true);
 
-  // Scroll & Mouse Tracking Effect
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
@@ -335,34 +319,29 @@ function App() {
     };
   }, []);
 
-  // Live Stats Fetching Effect
- // Live Stats Fetching Effect
-  // Live Stats Fetching Effect
-  // State for our live database projects
   const [dbProjects, setDbProjects] = useState([]);
 
-  // Fetch projects from Supabase when the page loads
   useEffect(() => {
     const fetchProjects = async () => {
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .order('id', { ascending: true });
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('id', { ascending: true });
 
-  if (error) {
-    console.error("Error:", error);
-  } else {
-    console.log("Projects loaded from DB:", data); // THIS IS THE KEY
-    setDbProjects(data);
-  }
-};
+      if (error) {
+        console.error("Error:", error);
+      } else {
+        console.log("Projects loaded from DB:", data); 
+        setDbProjects(data);
+      }
+    };
 
     fetchProjects();
   }, []);
+  
   useEffect(() => {
     const fetchLiveStats = async () => {
       try {
-        // 1. Fetch GitHub Stats
         if (GITHUB_USERNAME && GITHUB_USERNAME !== "YOUR_GITHUB_USERNAME") {
           const githubRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`);
           if (githubRes.ok) {
@@ -374,13 +353,12 @@ function App() {
           }
         }
         
-        // 2. Fetch LeetCode Stats (Updated with /solved endpoint)
         if (LEETCODE_USERNAME && LEETCODE_USERNAME !== "YOUR_LEETCODE_USERNAME") {
           const leetcodeRes = await fetch(`https://alfa-leetcode-api.onrender.com/${LEETCODE_USERNAME}/solved`);
           if (leetcodeRes.ok) {
             const leetcodeData = await leetcodeRes.json();
             setLeetcodeStats({
-              solved: leetcodeData.solvedProblem || 0, // Note the updated key here!
+              solved: leetcodeData.solvedProblem || 0, 
               easy: leetcodeData.easySolved || 0,
               medium: leetcodeData.mediumSolved || 0,
               hard: leetcodeData.hardSolved || 0
@@ -396,14 +374,14 @@ function App() {
 
     fetchLiveStats();
   }, []);
-  // Contact Form States
+  
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [formStatus, setFormStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
+  const [formStatus, setFormStatus] = useState('idle'); 
+  
   const handleSendMessage = async (e) => {
     e.preventDefault();
     setFormStatus('submitting');
 
-    // Trigger a loading toast that we can update later
     const toastId = toast.loading('Sending message...');
 
     const { error } = await supabase
@@ -418,25 +396,22 @@ function App() {
       setFormStatus('idle');
     } else {
       toast.success("Message sent successfully! I'll get back to you soon.", { id: toastId });
-      setFormData({ name: '', email: '', message: '' }); // Clear the form
+      setFormData({ name: '', email: '', message: '' }); 
       setFormStatus('idle'); 
     }
   };
-  // Handle Form Input Changes
+  
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Form Submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setFormStatus('submitting');
 
-    // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrx_YxfBOc5krilzQ0tBn6W0mvzmna6rAqWm3x48I_G3ND8tL7Ws4DhauCDZZg9FxL/exec"; 
 
     try {
-      // We use text/plain to bypass complex CORS preflight requirements
       await fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify(formData),
@@ -445,21 +420,22 @@ function App() {
         },
       });
       setFormStatus('success');
-      setFormData({ name: '', email: '', message: '' }); // Clear form
-      setTimeout(() => setFormStatus('idle'), 5000); // Reset button after 5s
+      setFormData({ name: '', email: '', message: '' }); 
+      setTimeout(() => setFormStatus('idle'), 5000); 
     } catch (error) {
       console.error("Form submission error:", error);
       setFormStatus('error');
       setTimeout(() => setFormStatus('idle'), 5000);
     }
   };
+  
   if (window.location.pathname === '/admin') {
     return <AdminPanel />;
   }
+  
   return (
     <div className="app-container">
       
-      {/* Background Glow */}
       <div 
         className="cursor-blur"
         style={{
@@ -469,7 +445,6 @@ function App() {
         }}
       />
 
-      {/* Navigation */}
       <nav className="navbar">
         <a href="#home">Home</a>
         <a href="#about">About</a>
@@ -482,7 +457,6 @@ function App() {
         <a href="#contact">Contact</a>
       </nav>
 
-      {/* Hero Section */}
       <section id="home" className="hero-section">
         <div className="hero-content">
           <div className="hero-text">
@@ -510,7 +484,6 @@ function App() {
         </div>
       </section>
 
-      {/* About Section */}
       <section id="about" className="section about-section">
         <h2 className="section-title">About Me</h2>
         <div className="about-content">
@@ -526,12 +499,10 @@ function App() {
         </div>
       </section>
 
-      {/* Live Stats Dashboard */}
       <section id="stats" className="section stats-section">
         <h2 className="section-title">Live Coding Stats</h2>
         <div className="stats-dashboard">
           
-          {/* GitHub Stats */}
           <div className="stat-group">
             <h3 className="stat-group-title">
               <img src={githubIcon} alt="GitHub" className="stat-icon-img" /> GitHub Activity
@@ -548,7 +519,6 @@ function App() {
             </div>
           </div>
 
-          {/* LeetCode Stats */}
           <div className="stat-group">
             <h3 className="stat-group-title">LeetCode Progress</h3>
             <div className="stats-grid leetcode-grid">
@@ -574,7 +544,6 @@ function App() {
         </div>
       </section>
 
-      {/* Skills Section */}
       <section id="skills" className="section skills-section">
         <h2 className="section-title">Technical Expertise</h2>
         <div className="descriptive-skills-grid">
@@ -622,7 +591,6 @@ function App() {
         </div>
       </section>
 
-      {/* Achievements Section */}
       <section id="achievements" className="section achievements-section">
         <h2 className="section-title">Achievements</h2>
         <div className="achievement-card">
@@ -642,7 +610,6 @@ function App() {
         </div>
       </section>
 
-     {/* Projects Section */}
 <section id="projects" className="projects-section">
   <h2 className="section-title">Projects</h2>
   
@@ -654,11 +621,8 @@ function App() {
         </div>
         <p className="project-desc">{project.description}</p>
         
-        {/* Map the PostgreSQL array of tags into nice CSS badges */}
-        {/* Map the PostgreSQL array of tags into nice CSS badges */}
 <div className="project-tags">
   {project.tags && project.tags.map((tag, idx) => {
-    // Automatically detect if the tag is an award/achievement
     const isAward = tag.toLowerCase().includes('winner') || tag.toLowerCase().includes('prize');
     
     return (
@@ -685,7 +649,6 @@ function App() {
   </div>
 </section>
 
-      {/* Certifications Section */}
       <section id="certifications" className="section cert-section">
         
         {zoomedCert && (
@@ -716,7 +679,6 @@ function App() {
         </div>
       </section>
 
-      {/* Education Section */}
       <section id="education" className="section edu-section">
         <h2 className="section-title">Education</h2>
         <div className="timeline">
@@ -746,12 +708,11 @@ function App() {
         </div>
       </section>
 
-{/* Contact Section */}
 <section id="contact" className="contact-section" style={{ padding: '4rem 2rem', maxWidth: '600px', margin: '0 auto' }}>
   <h2 className="section-title">Get In Touch</h2>
   <p style={{ color: '#94a3b8', marginBottom: '2rem' }}>Currently open for new opportunities. Send me a message and I'll get back to you!</p>
           <Toaster position="bottom-right" reverseOrder={false} />
-  <form onSubmit={handleSendMessage} className="contact-form" /* ... rest of your form setup */ ></form>
+  <form onSubmit={handleSendMessage} className="contact-form"></form>
   <form onSubmit={handleSendMessage} className="contact-form" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
     <input 
       type="text" 
@@ -790,7 +751,6 @@ function App() {
   </form>
 </section>
       
-      {/* Footer */}
       <footer>
         <div className="footer-content">
           <p>© {new Date().getFullYear()} Ajit Dikshit. Designed & Built with React.</p>
@@ -807,7 +767,6 @@ function App() {
           </div>
         </div>
       </footer>
-     {/* Render the Chatbot here so it floats on top of everything! */}
       <Chatbot />
       <Analytics />
 

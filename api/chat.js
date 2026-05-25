@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // 1. Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -12,7 +11,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 2. Send the message to the Gemini API
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,  {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -20,8 +18,7 @@ export default async function handler(req, res) {
         contents: [{
           role: "user",
           parts: [{
-            // Here we give the AI its "system instructions" so it knows who it is!
-text: `You are the AI assistant for Ajit Dikshit. 
+            text: `You are the AI assistant for Ajit Dikshit. 
 Ajit is a B.Tech Computer Science student at VIT Bhopal (2024-2028).
 Skills: Java, Spring Boot, Unity, C#, Data Analytics.
 Projects:
@@ -41,7 +38,6 @@ Visitor message: "${message}"`          }]
         throw new Error(data.error?.message || 'API Error');
     }
 
-    // 3. Extract the text and send it back to the React frontend
     const reply = data.candidates[0].content.parts[0].text;
     res.status(200).json({ reply });
 

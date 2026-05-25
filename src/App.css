@@ -1,4 +1,3 @@
-/* Base Styles & Box Sizing */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -28,9 +27,6 @@ body {
   position: relative; 
 }
 
-/* =========================================
-   Mouse Following Background Effect
-   ========================================= */
 .cursor-blur {
   position: fixed; 
   width: 40vmax; 
@@ -42,9 +38,6 @@ body {
   filter: blur(100px); 
 }
 
-/* =========================================
-   Typography & Headers
-   ========================================= */
 h1, h2, h3, h4 {
   color: #ffffff;
   margin-top: 0;
@@ -70,7 +63,6 @@ h1, h2, h3, h4 {
   border-radius: 2px;
 }
 
-/* Sections */
 .section {
   width: 100%;
   max-width: 1000px;
@@ -78,9 +70,6 @@ h1, h2, h3, h4 {
   box-sizing: border-box;
 }
 
-/* =========================================
-   Navigation Bar
-   ========================================= */
 .navbar {
   position: fixed;
   top: 0;
@@ -125,9 +114,6 @@ h1, h2, h3, h4 {
   transform: scaleX(1);
 }
 
-/* =========================================
-   Hero Section
-   ========================================= */
 .hero-section {
   min-height: 100vh;
   display: flex;
@@ -193,7 +179,6 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 40px rgba(37, 99, 235, 0.25);
 }
 
-/* Typewriter Effect Styles */
 .typewriter-container {
   display: inline-block;
   white-space: nowrap;
@@ -212,7 +197,6 @@ h1, h2, h3, h4 {
   50% { opacity: 0; }
 }
 
-/* Buttons */
 .btn-primary, .btn-secondary, .btn-outline {
   padding: 0.8rem 1.5rem;
   border-radius: 6px;
@@ -260,9 +244,6 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 10px rgba(37, 99, 235, 0.2);
 }
 
-/* =========================================
-   About Section
-   ========================================= */
 .about-content {
   background-color: #111;
   padding: 2.5rem;
@@ -279,7 +260,6 @@ h1, h2, h3, h4 {
   margin-bottom: 0;
 }
 
-/* Currently Learning Add-on */
 .currently-learning {
   margin-top: 2rem !important;
   padding-top: 1.5rem;
@@ -293,9 +273,6 @@ h1, h2, h3, h4 {
   margin-right: 0.5rem;
 }
 
-/* =========================================
-   Descriptive Skills Section
-   ========================================= */
 .descriptive-skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -321,7 +298,7 @@ h1, h2, h3, h4 {
   color: #94a3b8;
   font-size: 0.95rem;
   line-height: 1.6;
-  flex-grow: 1; /* Pushes tags to the bottom evenly */
+  flex-grow: 1; 
   margin-bottom: 1.5rem;
 }
 
@@ -342,9 +319,6 @@ h1, h2, h3, h4 {
   border: 1px solid rgba(37, 99, 235, 0.15);
 }
 
-/* =========================================
-   Achievements Section
-   ========================================= */
 .achievement-card {
   background-color: #111;
   padding: 2.5rem;
@@ -395,9 +369,6 @@ h1, h2, h3, h4 {
   }
 }
 
-/* =========================================
-   Projects Section
-   ========================================= */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -458,12 +429,6 @@ h1, h2, h3, h4 {
   border: 1px solid rgba(38, 198, 218, 0.2);
 }
 
-/* =========================================
-   Certifications Section
-   ========================================= */
-/* =========================================
-   Certifications Section & Zoom Animation
-   ========================================= */
 .cert-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
@@ -480,40 +445,34 @@ h1, h2, h3, h4 {
   gap: 1.2rem;
 }
 
-/* Base image styling */
 .cert-icon {
   width: 60px; 
   height: auto;
   border-radius: 4px;
   flex-shrink: 0; 
   cursor: zoom-in;
-  /* Smooth, slightly bouncy easing transition */
   transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
   position: relative;
   z-index: 1;
 }
 
-/* Subtle visual hint that it is clickable */
 .cert-icon:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-/* The Zoomed State */
 .cert-icon.zoomed {
-  transform: scale(4) translateX(15px); /* Scales up and adjusts position */
-  z-index: 1000; /* Forces it to pop above all other cards */
+  transform: scale(4) translateX(15px); 
+  z-index: 1000; 
   cursor: zoom-out;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Overrides the hover effect when it is already zoomed */
 .cert-icon.zoomed:hover {
   transform: scale(4) translateX(15px);
 }
 
-/* Makes the zoomed image even larger on desktop screens */
 @media (min-width: 768px) {
   .cert-icon.zoomed {
     transform: scale(5.5) translateX(15px); 
@@ -535,12 +494,7 @@ h1, h2, h3, h4 {
   line-height: 1.4;
   margin: 0;
 }
-/* =========================================
-   Education Section (Timeline)
-   ========================================= */
-/* =========================================
-   Education Section (Timeline)
-   ========================================= */
+
 .timeline {
   position: relative;
   max-width: 800px;
@@ -577,14 +531,12 @@ h1, h2, h3, h4 {
   background-color: #2563eb;
   border: 4px solid #050505;
   box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
-  /* RESTORED: transition for scaling */
   transition: all 0.3s ease; 
 }
 
 .timeline-item:hover .timeline-dot {
   background-color: #60a5fa;
   box-shadow: 0 0 15px rgba(96, 165, 250, 0.8);
-  /* RESTORED: dot scaling up */
   transform: scale(1.2); 
 }
 
@@ -593,14 +545,12 @@ h1, h2, h3, h4 {
   padding: 2rem;
   border-radius: 12px;
   border: 1px solid #1e293b;
-  /* RESTORED: transition for sliding */
   transition: all 0.3s ease; 
 }
 
 .timeline-content:hover {
   border-color: #2563eb;
   background-color: rgba(37, 99, 235, 0.03);
-  /* RESTORED: card sliding to the right */
   transform: translateX(8px); 
 }
 
@@ -634,9 +584,7 @@ h1, h2, h3, h4 {
   margin: 0;
   line-height: 1.6;
 }
-/* =========================================
-   Contact Section & Custom Icons
-   ========================================= */
+
 .contact-section {
   padding-bottom: 8rem;
 }
@@ -685,13 +633,10 @@ h1, h2, h3, h4 {
   background-color: rgba(37, 99, 235, 0.05);
 }
 
-/* Styling for the new image icons */
 .contact-custom-icon {
   width: 32px;
   height: 32px;
   object-fit: contain;
-  /* Optional: if your downloaded icons are black, this filter makes them white */
-  /* filter: invert(1); */ 
 }
 
 .link-title {
@@ -708,9 +653,6 @@ h1, h2, h3, h4 {
   font-size: 0.85rem;
 }
 
-/* =========================================
-   Footer Area
-   ========================================= */
 footer {
   width: 100%;
   padding: 2rem 1.5rem;
@@ -738,7 +680,6 @@ footer {
   object-fit: contain;
   opacity: 0.7;
   transition: opacity 0.3s ease, transform 0.3s ease;
-  /* Optional: filter: invert(1); */
 }
 
 .footer-socials a:hover .footer-custom-icon {
@@ -756,9 +697,6 @@ footer {
   }
 }
 
-/* =========================================
-   Responsive Design
-   ========================================= */
 @media (max-width: 768px) {
   .hero-content {
     flex-direction: column-reverse;
@@ -793,43 +731,38 @@ footer {
     grid-template-columns: 1fr;
   }
 }
-/* =========================================
-   Project Links Layout
-   ========================================= */
+
 .project-links {
   display: flex;
   gap: 1rem;
-  margin-top: auto; /* Forces the buttons to the bottom of the card */
+  margin-top: auto; 
   width: 100%;
 }
 
 .project-links a {
-  flex: 1; /* Makes both buttons take up exactly 50% of the space */
+  flex: 1; 
   text-align: center;
   font-size: 0.85rem;
-  padding: 0.6rem 0; /* Adjusts padding to ensure text fits side-by-side */
-  white-space: nowrap; /* Prevents text from breaking into two lines */
+  padding: 0.6rem 0; 
+  white-space: nowrap; 
 }
 
-/* Adjust mobile layout if the screen is very thin */
 @media (max-width: 400px) {
   .project-links {
     flex-direction: column;
     gap: 0.8rem;
   }
 }
-/* =========================================
-   Zoom Overlay Background
-   ========================================= */
+
 .zoom-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7); /* Dims the rest of the site */
-  backdrop-filter: blur(5px); /* Blurs out the background content */
-  z-index: 999; /* Sits right beneath the zoomed certificate */
+  background: rgba(0, 0, 0, 0.7); 
+  backdrop-filter: blur(5px); 
+  z-index: 999; 
   cursor: zoom-out;
   animation: fadeIn 0.3s ease forwards;
 }
@@ -838,9 +771,7 @@ footer {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-/* =========================================
-   Live Stats Dashboard
-   ========================================= */
+
 .stats-dashboard {
   display: flex;
   flex-direction: column;
@@ -866,7 +797,7 @@ footer {
 .stat-icon-img {
   width: 24px;
   height: 24px;
-  filter: invert(1); /* Makes the dark GitHub icon white */
+  filter: invert(1); 
 }
 
 .stats-grid {
@@ -906,20 +837,16 @@ footer {
   letter-spacing: 1px;
 }
 
-/* LeetCode Specific Coloring */
-.highlight-stat .stat-number { color: #2563eb; } /* Total */
-.easy-stat .stat-number { color: #00b8a3; } /* Easy (Cyan/Green) */
-.medium-stat .stat-number { color: #ffc01e; } /* Medium (Yellow) */
-.hard-stat .stat-number { color: #ff375f; } /* Hard (Red) */
+.highlight-stat .stat-number { color: #2563eb; } 
+.easy-stat .stat-number { color: #00b8a3; } 
+.medium-stat .stat-number { color: #ffc01e; } 
+.hard-stat .stat-number { color: #ff375f; } 
 
 @media (max-width: 600px) {
   .stats-dashboard { padding: 2rem 1.5rem; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
 }
 
-/* =========================================
-   Floating AI Chatbot
-   ========================================= */
 .chatbot-container {
   position: fixed;
   bottom: 2rem;
@@ -939,7 +866,6 @@ footer {
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
   transition: transform 0.2s, background-color 0.2s;
-  /* NEW: Adds the glowing float effect */
   animation: floatPulse 3s infinite ease-in-out; 
 }
 
@@ -958,7 +884,6 @@ footer {
   flex-direction: column;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  /* NEW: Adds the springy entry animation */
   animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -1005,7 +930,6 @@ footer {
   border-radius: 12px;
   font-size: 0.9rem;
   line-height: 1.4;
-  /* NEW: Adds the slide-up effect for every new message */
   animation: slideUpMessage 0.3s ease-out forwards;
 }
 
@@ -1026,7 +950,6 @@ footer {
 .typing {
   font-style: italic;
   opacity: 0.7;
-  /* NEW: Overrides the standard bubble animation with a pulse */
   animation: pulseText 1.5s infinite ease-in-out;
 }
 
@@ -1077,11 +1000,7 @@ footer {
     bottom: 5vw;
   }
 }
-/* =========================================
-   Chatbot Animations (Keyframes)
-   ========================================= */
 
-/* Springy pop-in for the main window */
 @keyframes popIn {
   0% { 
     opacity: 0; 
@@ -1095,7 +1014,6 @@ footer {
   }
 }
 
-/* Smooth slide-up for new messages */
 @keyframes slideUpMessage {
   0% { 
     opacity: 0; 
@@ -1107,18 +1025,17 @@ footer {
   }
 }
 
-/* Gentle glowing pulse for the toggle button */
 @keyframes floatPulse {
   0% { box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); transform: translateY(0); }
   50% { box-shadow: 0 4px 25px rgba(37, 99, 235, 0.8); transform: translateY(-3px); }
   100% { box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); transform: translateY(0); }
 }
 
-/* Fading pulse for the typing indicator */
 @keyframes pulseText {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
+
 .project-tags {
   display: flex;
   flex-wrap: wrap;
@@ -1134,10 +1051,10 @@ footer {
   font-size: 0.85rem;
   font-weight: 500;
 }
-/* Special Styling for Project Achievements */
+
 .tag.award-badge {
-  background-color: rgba(234, 179, 8, 0.15); /* Soft gold background */
-  color: #facc15; /* Bright gold text */
+  background-color: rgba(234, 179, 8, 0.15); 
+  color: #facc15; 
   border: 1px solid rgba(234, 179, 8, 0.4);
   box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
   font-weight: 700;
