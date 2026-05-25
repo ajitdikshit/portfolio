@@ -215,9 +215,7 @@ const AdminPanel = () => {
 };
 // --- Main App Component ---
 function App() {
-  if (window.location.pathname === '/admin') {
-    return <AdminPanel />;
-  }
+  
   // ==========================================
   // USERNAMES FOR LIVE STATS:
   // ==========================================
@@ -366,6 +364,9 @@ function App() {
       setTimeout(() => setFormStatus('idle'), 5000);
     }
   };
+  if (window.location.pathname === '/admin') {
+    return <AdminPanel />;
+  }
   return (
     <div className="app-container">
       
