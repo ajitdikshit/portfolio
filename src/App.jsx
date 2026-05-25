@@ -646,7 +646,7 @@ const [isNavOpen, setIsNavOpen] = useState(false);
             <div className="hero-actions">
               <a href="#projects" className="btn-primary">View My Work</a>
               <a href="#contact" className="btn-secondary">Contact Me</a>
-              <a href="./resume.pdf" download="Ajit_Dikshit_Resume.pdf" className="btn-secondary">Download Resume</a>
+              <a href="/public/resume.pdf" download="Ajit_Dikshit_Resume.pdf" className="btn-secondary">Download Resume</a>
             </div>
           </div>
           
