@@ -130,6 +130,7 @@ const Chatbot = () => {
   );
 };
 // --- Admin Panel Component ---
+// --- Admin Panel Component ---
 const AdminPanel = () => {
   const [session, setSession] = useState(null);
   const [email, setEmail] = useState('');
@@ -137,7 +138,10 @@ const AdminPanel = () => {
   const [messages, setMessages] = useState([]);
   const [authError, setAuthError] = useState('');
 
-  // Check if already logged in
+  // New Project State
+  const [newProject, setNewProject] = useState({ title: '', description: '', tags: '', github_url: '', live_demo_url: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -150,11 +154,7 @@ const AdminPanel = () => {
   }, []);
 
   const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
+    const { data, error } = await supabase.from('messages').select('*').order('created_at', { ascending: false });
     if (!error) setMessages(data);
   };
 
@@ -173,7 +173,32 @@ const AdminPanel = () => {
 
   const deleteMessage = async (id) => {
     await supabase.from('messages').delete().match({ id });
-    fetchMessages(); // Refresh list after deleting
+    fetchMessages();
+  };
+
+  // Add Project Function
+  const handleAddProject = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Convert comma-separated string into a Postgres array
+    const tagsArray = newProject.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+
+    const { error } = await supabase.from('projects').insert([{
+      title: newProject.title,
+      description: newProject.description,
+      tags: tagsArray,
+      github_url: newProject.github_url || null,
+      live_demo_url: newProject.live_demo_url || null
+    }]);
+
+    if (error) {
+      alert("Error adding project: " + error.message);
+    } else {
+      alert("Project added successfully!");
+      setNewProject({ title: '', description: '', tags: '', github_url: '', live_demo_url: '' });
+    }
+    setIsSubmitting(false);
   };
 
   if (!session) {
@@ -197,18 +222,39 @@ const AdminPanel = () => {
         <button onClick={handleLogout} style={{ padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
       </div>
 
-      <h3>Inbox ({messages.length})</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {messages.map(msg => (
-          <div key={msg.id} style={{ padding: '1rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <strong>{msg.name} ({msg.email})</strong>
-              <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>{new Date(msg.created_at).toLocaleString()}</span>
-            </div>
-            <p>{msg.message}</p>
-            <button onClick={() => deleteMessage(msg.id)} style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer', marginTop: '1rem' }}>Delete</button>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        {/* Left Column: Messages */}
+        <div>
+          <h3>Inbox ({messages.length})</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {messages.map(msg => (
+              <div key={msg.id} style={{ padding: '1rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <strong>{msg.name}</strong>
+                  <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>{new Date(msg.created_at).toLocaleString()}</span>
+                </div>
+                <div style={{ marginBottom: '1rem', color: '#38bdf8', fontSize: '0.9rem' }}>{msg.email}</div>
+                <p>{msg.message}</p>
+                <button onClick={() => deleteMessage(msg.id)} style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer', marginTop: '1rem' }}>Delete</button>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* Right Column: Add Project Form */}
+        <div>
+          <h3>Add New Project</h3>
+          <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: '#1e293b', padding: '1.5rem', borderRadius: '8px', border: '1px solid #334155' }}>
+            <input type="text" placeholder="Project Title" required value={newProject.title} onChange={(e) => setNewProject({...newProject, title: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <textarea placeholder="Description" required rows="4" value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <input type="text" placeholder="Tags (comma separated, e.g., Java, React)" required value={newProject.tags} onChange={(e) => setNewProject({...newProject, tags: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <input type="url" placeholder="GitHub URL (Optional)" value={newProject.github_url} onChange={(e) => setNewProject({...newProject, github_url: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <input type="url" placeholder="Live Demo URL (Optional)" value={newProject.live_demo_url} onChange={(e) => setNewProject({...newProject, live_demo_url: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <button type="submit" disabled={isSubmitting} style={{ padding: '1rem', background: '#4ade80', color: '#0f172a', fontWeight: 'bold', border: 'none', cursor: 'pointer', borderRadius: '4px' }}>
+              {isSubmitting ? 'Saving...' : 'Add Project'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
