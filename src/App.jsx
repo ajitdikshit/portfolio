@@ -131,21 +131,25 @@ const Chatbot = () => {
 };
 // --- Admin Panel Component ---
 // --- Admin Panel Component ---
+// --- Admin Panel Component ---
 const AdminPanel = () => {
   const [session, setSession] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [messages, setMessages] = useState([]);
+  const [projects, setProjects] = useState([]); // NEW: Store projects
   const [authError, setAuthError] = useState('');
 
-  // New Project State
   const [newProject, setNewProject] = useState({ title: '', description: '', tags: '', github_url: '', live_demo_url: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) fetchMessages();
+      if (session) {
+        fetchMessages();
+        fetchProjects(); // NEW: Fetch projects on login
+      }
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
@@ -158,12 +162,21 @@ const AdminPanel = () => {
     if (!error) setMessages(data);
   };
 
+  // NEW: Fetch existing projects
+  const fetchProjects = async () => {
+    const { data, error } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+    if (!error) setProjects(data);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setAuthError('');
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) setAuthError('Invalid login credentials.');
-    else fetchMessages();
+    else {
+      fetchMessages();
+      fetchProjects();
+    }
   };
 
   const handleLogout = async () => {
@@ -176,12 +189,19 @@ const AdminPanel = () => {
     fetchMessages();
   };
 
-  // Add Project Function
+  // NEW: Delete project with confirmation
+  const deleteProject = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this project? This cannot be undone.");
+    if (confirmDelete) {
+      await supabase.from('projects').delete().match({ id });
+      fetchProjects(); // Refresh list
+    }
+  };
+
   const handleAddProject = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Convert comma-separated string into a Postgres array
     const tagsArray = newProject.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
 
     const { error } = await supabase.from('projects').insert([{
@@ -195,8 +215,8 @@ const AdminPanel = () => {
     if (error) {
       alert("Error adding project: " + error.message);
     } else {
-      alert("Project added successfully!");
       setNewProject({ title: '', description: '', tags: '', github_url: '', live_demo_url: '' });
+      fetchProjects(); // NEW: Instantly update the list after adding
     }
     setIsSubmitting(false);
   };
@@ -222,38 +242,61 @@ const AdminPanel = () => {
         <button onClick={handleLogout} style={{ padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-        {/* Left Column: Messages */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+        
+        {/* Left Column: Messages Inbox */}
         <div>
           <h3>Inbox ({messages.length})</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '80vh', overflowY: 'auto', paddingRight: '1rem' }}>
             {messages.map(msg => (
               <div key={msg.id} style={{ padding: '1rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                   <strong>{msg.name}</strong>
-                  <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>{new Date(msg.created_at).toLocaleString()}</span>
+                  <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>{new Date(msg.created_at).toLocaleDateString()}</span>
                 </div>
                 <div style={{ marginBottom: '1rem', color: '#38bdf8', fontSize: '0.9rem' }}>{msg.email}</div>
-                <p>{msg.message}</p>
-                <button onClick={() => deleteMessage(msg.id)} style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer', marginTop: '1rem' }}>Delete</button>
+                <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: '1.5' }}>{msg.message}</p>
+                <button onClick={() => deleteMessage(msg.id)} style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer', marginTop: '1rem', fontSize: '0.85rem' }}>Delete Message</button>
               </div>
             ))}
+            {messages.length === 0 && <p style={{ color: '#94a3b8' }}>No new messages.</p>}
           </div>
         </div>
 
-        {/* Right Column: Add Project Form */}
+        {/* Right Column: Projects Management */}
         <div>
           <h3>Add New Project</h3>
-          <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: '#1e293b', padding: '1.5rem', borderRadius: '8px', border: '1px solid #334155' }}>
+          <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: '#1e293b', padding: '1.5rem', borderRadius: '8px', border: '1px solid #334155', marginBottom: '2rem' }}>
             <input type="text" placeholder="Project Title" required value={newProject.title} onChange={(e) => setNewProject({...newProject, title: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
-            <textarea placeholder="Description" required rows="4" value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
-            <input type="text" placeholder="Tags (comma separated, e.g., Java, React)" required value={newProject.tags} onChange={(e) => setNewProject({...newProject, tags: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
-            <input type="url" placeholder="GitHub URL (Optional)" value={newProject.github_url} onChange={(e) => setNewProject({...newProject, github_url: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
-            <input type="url" placeholder="Live Demo URL (Optional)" value={newProject.live_demo_url} onChange={(e) => setNewProject({...newProject, live_demo_url: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <textarea placeholder="Description" required rows="3" value={newProject.description} onChange={(e) => setNewProject({...newProject, description: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <input type="text" placeholder="Tags (e.g., React, Java, Unity)" required value={newProject.tags} onChange={(e) => setNewProject({...newProject, tags: e.target.value})} style={{ padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <input type="url" placeholder="GitHub URL (Optional)" value={newProject.github_url} onChange={(e) => setNewProject({...newProject, github_url: e.target.value})} style={{ flex: 1, padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+              <input type="url" placeholder="Live Demo (Optional)" value={newProject.live_demo_url} onChange={(e) => setNewProject({...newProject, live_demo_url: e.target.value})} style={{ flex: 1, padding: '0.8rem', borderRadius: '4px', background: '#0f172a', color: 'white', border: '1px solid #334155' }} />
+            </div>
             <button type="submit" disabled={isSubmitting} style={{ padding: '1rem', background: '#4ade80', color: '#0f172a', fontWeight: 'bold', border: 'none', cursor: 'pointer', borderRadius: '4px' }}>
-              {isSubmitting ? 'Saving...' : 'Add Project'}
+              {isSubmitting ? 'Saving...' : 'Publish Project'}
             </button>
           </form>
+
+          {/* Existing Projects List */}
+          <h3>Manage Projects ({projects.length})</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '50vh', overflowY: 'auto', paddingRight: '1rem' }}>
+            {projects.map(proj => (
+              <div key={proj.id} style={{ padding: '1rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 0.5rem 0' }}>{proj.title}</h4>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {proj.tags && proj.tags.map(tag => (
+                      <span key={tag} style={{ background: '#334155', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem' }}>{tag}</span>
+                    ))}
+                  </div>
+                </div>
+                <button onClick={() => deleteProject(proj.id)} style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', marginLeft: '1rem' }}>Delete</button>
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
     </div>
