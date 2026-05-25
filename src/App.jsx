@@ -632,6 +632,7 @@ function App() {
       </footer>
      {/* Render the Chatbot here so it floats on top of everything! */}
       <Chatbot />
+      <Analytics />
 
     </div>
   );
