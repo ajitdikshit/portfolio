@@ -454,11 +454,22 @@ function App() {
         <p className="project-desc">{project.description}</p>
         
         {/* Map the PostgreSQL array of tags into nice CSS badges */}
-        <div className="project-tags">
-          {project.tags && project.tags.map((tag, idx) => (
-            <span key={idx} className="tag">{tag}</span>
-          ))}
-        </div>
+        {/* Map the PostgreSQL array of tags into nice CSS badges */}
+<div className="project-tags">
+  {project.tags && project.tags.map((tag, idx) => {
+    // Automatically detect if the tag is an award/achievement
+    const isAward = tag.toLowerCase().includes('winner') || tag.toLowerCase().includes('prize');
+    
+    return (
+      <span 
+        key={idx} 
+        className={isAward ? "tag award-badge" : "tag"}
+      >
+        {isAward ? `🏆 ${tag}` : tag}
+      </span>
+    );
+  })}
+</div>
 
         <div className="project-links">
           {project.live_demo_url && (
