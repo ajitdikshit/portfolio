@@ -411,15 +411,16 @@ const [isNavOpen, setIsNavOpen] = useState(false);
 
   // Files mapped to your specific engineering stack
   const directoryFiles = [
-    { id: 'home', name: 'index.jsx', type: 'react' },
-    { id: 'about', name: 'README.md', type: 'md' },
-    { id: 'skills', name: 'dependencies.json', type: 'json' },
+    { id: 'home', name: 'Home.jsx', type: 'react' },
+    { id: 'about', name: 'ABOUTME.md', type: 'md' },
     { id: 'stats', name: 'analytics.py', type: 'python' },
-    { id: 'achievements', name: 'audit_script.sh', type: 'bash' },
-    { id: 'projects', name: 'schema.sql', type: 'sql' },
-    { id: 'certifications', name: 'EnterpriseConfig.java', type: 'java' },
-    { id: 'education', name: 'PhysicsEngine.cs', type: 'csharp' },
-    { id: 'contact', name: '.env', type: 'env' }
+    { id: 'skills', name: 'Stack.json', type: 'json' },
+    
+    { id: 'achievements', name: 'achievements.sh', type: 'bash' },
+    { id: 'projects', name: 'projects.sql', type: 'sql' },
+    { id: 'certifications', name: 'Certifications.java', type: 'java' },
+    { id: 'education', name: 'Education.cs', type: 'csharp' },
+    { id: 'contact', name: 'Contact.env', type: 'env' }
   ];
 
   const handleFileExecute = (index, id) => {
