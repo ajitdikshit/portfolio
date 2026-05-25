@@ -9,6 +9,7 @@ import hackathonCert from './hackathon.jpg';
 import emailIcon from './email.png';
 import linkedinIcon from './linkedin.png';
 import githubIcon from './github.png';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 // --- Certificate Data Array ---
@@ -225,8 +226,11 @@ function App() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
   const handleSendMessage = async (e) => {
-    e.preventDefault(); // Prevents the page from refreshing
+    e.preventDefault();
     setFormStatus('submitting');
+
+    // Trigger a loading toast that we can update later
+    const toastId = toast.loading('Sending message...');
 
     const { error } = await supabase
       .from('messages')
@@ -236,16 +240,14 @@ function App() {
 
     if (error) {
       console.error("Error sending message:", error);
-      setFormStatus('error');
+      toast.error("Something went wrong. Please try again.", { id: toastId });
+      setFormStatus('idle');
     } else {
-      setFormStatus('success');
+      toast.success("Message sent successfully! I'll get back to you soon.", { id: toastId });
       setFormData({ name: '', email: '', message: '' }); // Clear the form
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => setFormStatus('idle'), 3000); 
+      setFormStatus('idle'); 
     }
   };
-
   // Handle Form Input Changes
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -571,7 +573,8 @@ function App() {
 <section id="contact" className="contact-section" style={{ padding: '4rem 2rem', maxWidth: '600px', margin: '0 auto' }}>
   <h2 className="section-title">Get In Touch</h2>
   <p style={{ color: '#94a3b8', marginBottom: '2rem' }}>Currently open for new opportunities. Send me a message and I'll get back to you!</p>
-
+          <Toaster position="bottom-right" reverseOrder={false} />
+  <form onSubmit={handleSendMessage} className="contact-form" /* ... rest of your form setup */ ></form>
   <form onSubmit={handleSendMessage} className="contact-form" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
     <input 
       type="text" 
@@ -606,8 +609,7 @@ function App() {
       {formStatus === 'submitting' ? 'Sending...' : 'Send Message'}
     </button>
 
-    {formStatus === 'success' && <p style={{ color: '#4ade80', textAlign: 'center' }}>Message sent successfully!</p>}
-    {formStatus === 'error' && <p style={{ color: '#f87171', textAlign: 'center' }}>Something went wrong. Please try again.</p>}
+
   </form>
 </section>
       
