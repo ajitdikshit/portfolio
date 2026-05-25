@@ -292,7 +292,7 @@ const AdminPanel = () => {
     </div>
   );
 };
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 
 const ThemeDial = () => {
   const [isDragging, setIsDragging] = useState(false);
