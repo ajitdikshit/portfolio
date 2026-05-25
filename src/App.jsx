@@ -129,8 +129,95 @@ const Chatbot = () => {
     </div>
   );
 };
+// --- Admin Panel Component ---
+const AdminPanel = () => {
+  const [session, setSession] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [authError, setAuthError] = useState('');
+
+  // Check if already logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) fetchMessages();
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  const fetchMessages = async () => {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (!error) setMessages(data);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setAuthError('Invalid login credentials.');
+    else fetchMessages();
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+  };
+
+  const deleteMessage = async (id) => {
+    await supabase.from('messages').delete().match({ id });
+    fetchMessages(); // Refresh list after deleting
+  };
+
+  if (!session) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0f172a' }}>
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
+          <h2 style={{ color: 'white', margin: 0 }}>Admin Login</h2>
+          {authError && <p style={{ color: '#f87171' }}>{authError}</p>}
+          <input type="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: '0.8rem', borderRadius: '4px' }} />
+          <input type="password" placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)} style={{ padding: '0.8rem', borderRadius: '4px' }} />
+          <button type="submit" style={{ padding: '0.8rem', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', cursor: 'pointer', borderRadius: '4px' }}>Login</button>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: '2rem', color: 'white', minHeight: '100vh', background: '#0f172a' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h2>Admin Dashboard</h2>
+        <button onClick={handleLogout} style={{ padding: '0.5rem 1rem', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
+      </div>
+
+      <h3>Inbox ({messages.length})</h3>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {messages.map(msg => (
+          <div key={msg.id} style={{ padding: '1rem', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <strong>{msg.name} ({msg.email})</strong>
+              <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>{new Date(msg.created_at).toLocaleString()}</span>
+            </div>
+            <p>{msg.message}</p>
+            <button onClick={() => deleteMessage(msg.id)} style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer', marginTop: '1rem' }}>Delete</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 // --- Main App Component ---
 function App() {
+  if (window.location.pathname === '/admin') {
+    return <AdminPanel />;
+  }
   // ==========================================
   // USERNAMES FOR LIVE STATS:
   // ==========================================
