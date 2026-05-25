@@ -406,7 +406,32 @@ function App() {
   
   const GITHUB_USERNAME = "ajitdikshit"; 
   const LEETCODE_USERNAME = "Ajit_Dikshit";
+const [isNavOpen, setIsNavOpen] = useState(false);
+  const [activeFile, setActiveFile] = useState(0);
 
+  // Files mapped to your specific engineering stack
+  const directoryFiles = [
+    { id: 'home', name: 'index.jsx', type: 'react' },
+    { id: 'about', name: 'README.md', type: 'md' },
+    { id: 'skills', name: 'dependencies.json', type: 'json' },
+    { id: 'stats', name: 'analytics.py', type: 'python' },
+    { id: 'achievements', name: 'audit_script.sh', type: 'bash' },
+    { id: 'projects', name: 'schema.sql', type: 'sql' },
+    { id: 'certifications', name: 'EnterpriseConfig.java', type: 'java' },
+    { id: 'education', name: 'PhysicsEngine.cs', type: 'csharp' },
+    { id: 'contact', name: '.env', type: 'env' }
+  ];
+
+  const handleFileExecute = (index, id) => {
+    setActiveFile(index); // Moves the debugger pointer instantly
+    
+    // Simulate a brief "compile/load" time before scrolling
+    setTimeout(() => {
+      const element = document.getElementById(id);
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
+      setIsNavOpen(false);
+    }, 500); 
+  };
   const [scrollY, setScrollY] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [zoomedCert, setZoomedCert] = useState(null);
@@ -554,17 +579,61 @@ function App() {
         }}
       />
 
-      <nav className="navbar">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#skills">Skills</a>
-        <a href="#stats">Stats</a>
-        <a href="#achievements">Achievements</a>
-        <a href="#projects">Projects</a>
-        <a href="#certifications">Certifications</a>
-        <a href="#education">Education</a>
-        <a href="#contact">Contact</a>
+      {/* Expandable IDE Terminal Button */}
+      <button 
+        className={`ide-toggle ${isNavOpen ? 'open' : ''}`} 
+        onClick={() => setIsNavOpen(!isNavOpen)}
+        aria-label="Toggle File Explorer"
+      >
+        <span className="prompt-symbol">{'>_'}</span>
+      </button>
+
+      {/* VS Code Style Sidebar */}
+      <nav className={`ide-sidebar ${isNavOpen ? 'active' : ''}`}>
+        <div className="ide-header">
+          <span>EXPLORER</span>
+          <span className="dots">...</span>
+        </div>
+        
+        <div className="ide-folder-title">
+          <span>▼ PORTFOLIO-ROOT</span>
+        </div>
+
+        <div className="editor-gutter-container">
+          {/* The Gutter Line Numbers */}
+          <div className="line-numbers">
+            {directoryFiles.map((_, i) => <div key={i}>{i + 1}</div>)}
+          </div>
+          
+          {/* The Moving Debugger Pointer */}
+          <div 
+            className="debugger-pointer"
+            style={{ transform: `translateY(${activeFile * 40}px)` }}
+          >
+            ▶
+          </div>
+
+          {/* The File List */}
+          <ul className="file-tree">
+            {directoryFiles.map((file, idx) => (
+              <li 
+                key={file.id} 
+                className={`file-item ${activeFile === idx ? 'active-file' : ''}`}
+                onClick={() => handleFileExecute(idx, file.id)}
+              >
+                <span className={`file-icon ${file.type}`}></span>
+                <span className="file-name">{file.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </nav>
+      
+      {/* Overlay to dim the background */}
+      <div 
+        className={`ide-overlay ${isNavOpen ? 'active' : ''}`} 
+        onClick={() => setIsNavOpen(false)}
+      ></div>
 
       <section id="home" className="hero-section">
         <div className="hero-content">

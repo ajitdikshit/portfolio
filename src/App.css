@@ -40,7 +40,7 @@ h1, h2, h3, h4 {
 .theme-dial-wrapper {
   position: fixed;
   top: 1.5rem;
-  left: 1.5rem; /* Or right: 1.5rem if your IDE menu is on the left */
+  right: 1.5rem; /* Or right: 1.5rem if your IDE menu is on the left */
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -161,50 +161,182 @@ h1, h2, h3, h4 {
   box-sizing: border-box;
 }
 
-.navbar {
+/* =========================================
+   IDE File Explorer Navigation
+   ========================================= */
+
+/* The Terminal Toggle Button */
+.ide-toggle {
   position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(5, 5, 5, 0.85);
-  backdrop-filter: blur(10px);
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 9999;
+  background: #1e1e1e; /* VS Code dark background */
+  border: 1px solid #333333;
+  width: 55px;
+  height: 55px;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   justify-content: center;
-  gap: 2.5rem;
-  padding: 1.2rem;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(37, 99, 235, 0.15);
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
 }
 
-.navbar a {
-  color: #94a3b8;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  transition: color 0.3s ease;
+.ide-toggle:hover {
+  border-color: #4ade80;
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+}
+
+.prompt-symbol {
+  color: #4ade80; /* Terminal Green */
+  font-family: 'Fira Code', monospace;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.ide-toggle.open .prompt-symbol {
+  color: #ef4444; /* Turns red to close */
+  content: "X";
+}
+
+/* Sidebar Container */
+.ide-sidebar {
+  position: fixed;
+  top: 0;
+  left: -320px; 
+  width: 300px;
+  height: 100vh;
+  background: #1e1e1e; /* Standard IDE Dark Theme */
+  border-right: 1px solid #333333;
+  z-index: 9998;
+  transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  padding: 6rem 0 2rem 0;
+  font-family: 'Consolas', 'Courier New', monospace;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+}
+
+.ide-sidebar.active {
+  left: 0;
+}
+
+/* Header & Folder Structure */
+.ide-header {
+  padding: 0 1.5rem 1rem 1.5rem;
+  color: #cccccc;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  letter-spacing: 1px;
+}
+
+.ide-folder-title {
+  padding: 0.5rem 1.5rem;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: #2d2d2d;
+  margin-bottom: 1rem;
+}
+
+/* Gutter and File Layout */
+.editor-gutter-container {
+  display: flex;
   position: relative;
 }
 
-.navbar a:hover {
-  color: #60a5fa;
+.line-numbers {
+  padding: 0 1rem;
+  color: #858585;
+  text-align: right;
+  font-size: 0.95rem;
+  line-height: 40px; /* Must match file-item height */
+  user-select: none;
+  border-right: 1px solid #404040;
 }
 
-.navbar a::after {
-  content: '';
+/* The Moving Debugger Arrow */
+.debugger-pointer {
   position: absolute;
-  bottom: -4px;
+  left: 28px; /* Positions it right over the border */
+  top: 0;
+  color: #eab308; /* Debugger Yellow */
+  font-size: 1.1rem;
+  line-height: 40px;
+  z-index: 10;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-shadow: 0 0 8px rgba(234, 179, 8, 0.6);
+}
+
+/* File Tree List */
+.file-tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.file-item {
+  height: 40px; /* MUST match line height */
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  cursor: pointer;
+  color: #cccccc;
+  transition: background 0.2s ease;
+}
+
+.file-item:hover {
+  background: #2a2d2e;
+}
+
+.file-item.active-file {
+  background: #37373d;
+  color: #ffffff;
+}
+
+.file-name {
+  font-size: 0.95rem;
+}
+
+/* Language Specific File Colors */
+.file-icon {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.react { background: #61dafb; }
+.md { background: #ffffff; border-radius: 2px; }
+.json { background: #cbcb41; }
+.python { background: #3572A5; }
+.bash { background: #4EAA25; }
+.sql { background: #e38c00; }
+.java { background: #b07219; }
+.csharp { background: #178600; }
+.env { background: #f6f6f6; opacity: 0.6; }
+
+/* Overlay */
+.ide-overlay {
+  position: fixed;
+  top: 0;
   left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: #2563eb;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9997;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-.navbar a:hover::after {
-  transform: scaleX(1);
+.ide-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
 }
-
 .hero-section {
   min-height: 100vh;
   display: flex;
