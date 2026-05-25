@@ -1,3 +1,85 @@
+/* =========================================
+   Global Theme Variables (HSL Engine)
+   ========================================= */
+:root {
+  /* Default to Dark Mode */
+  --bg-lightness: 5%;
+  --text-lightness: 95%;
+  --container-lightness: 11%;
+  --border-lightness: 20%;
+  
+  /* A slight blue hue (220) to keep the grays looking professional */
+  --base-hue: 220; 
+  --base-sat: 15%; 
+}
+
+/* =========================================
+   Base Layout & Theme Application
+   ========================================= */
+body {
+  background-color: hsl(var(--base-hue), var(--base-sat), var(--bg-lightness));
+  color: hsl(var(--base-hue), var(--base-sat), var(--text-lightness));
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  color: hsl(var(--base-hue), var(--base-sat), var(--text-lightness));
+}
+
+/* Update your container classes to use the variables */
+.about-content, .skill-description-card, .achievement-card, .project-card, .cert-card, .timeline-content, .contact-dashboard {
+  background-color: hsl(var(--base-hue), var(--base-sat), var(--container-lightness));
+  border: 1px solid hsl(var(--base-hue), var(--base-sat), var(--border-lightness));
+}
+
+/* =========================================
+   Hardware Dial UI
+   ========================================= */
+.theme-dial-wrapper {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem; /* Or right: 1.5rem if your IDE menu is on the left */
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hardware-dial {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #2a2a2a, #111111);
+  box-shadow: 
+    4px 4px 10px rgba(0, 0, 0, 0.5), 
+    -2px -2px 5px rgba(255, 255, 255, 0.05),
+    inset 0 0 0 2px #333;
+  position: relative;
+  cursor: ns-resize; /* Indicates up/down dragging */
+}
+
+.dial-indicator {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 12px;
+  background-color: #38bdf8;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+}
+
+.dial-label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: hsl(var(--base-hue), var(--base-sat), var(--text-lightness));
+  opacity: 0.7;
+}
 *, *::before, *::after {
   box-sizing: border-box;
 }
