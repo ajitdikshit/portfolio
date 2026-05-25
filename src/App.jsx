@@ -10,7 +10,32 @@ import emailIcon from './email.png';
 import linkedinIcon from './linkedin.png';
 import githubIcon from './github.png';
 
+// State for the Contact Form
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formStatus, setFormStatus] = useState(''); // 'idle', 'submitting', 'success', 'error'
 
+  // Handle form submission
+  const handleSendMessage = async (e) => {
+    e.preventDefault(); // Prevents the page from refreshing
+    setFormStatus('submitting');
+
+    const { error } = await supabase
+      .from('messages')
+      .insert([
+        { name: formData.name, email: formData.email, message: formData.message }
+      ]);
+
+    if (error) {
+      console.error("Error sending message:", error);
+      setFormStatus('error');
+    } else {
+      setFormStatus('success');
+      setFormData({ name: '', email: '', message: '' }); // Clear the form
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => setFormStatus('idle'), 3000); 
+    }
+  };
 // --- Certificate Data Array ---
 const certificatesData = [
   { id: 1, title: 'Core Java', img: 'https://github.com/ajitdikshit/portfolio/blob/main/src/assets/java.png?raw=true', desc: 'Mastered object-oriented programming concepts, multithreading, and standard libraries.' },
@@ -159,32 +184,6 @@ function App() {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
-  // State for the Contact Form
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [formStatus, setFormStatus] = useState(''); // 'idle', 'submitting', 'success', 'error'
-
-  // Handle form submission
-  const handleSendMessage = async (e) => {
-    e.preventDefault(); // Prevents the page from refreshing
-    setFormStatus('submitting');
-
-    const { error } = await supabase
-      .from('messages')
-      .insert([
-        { name: formData.name, email: formData.email, message: formData.message }
-      ]);
-
-    if (error) {
-      console.error("Error sending message:", error);
-      setFormStatus('error');
-    } else {
-      setFormStatus('success');
-      setFormData({ name: '', email: '', message: '' }); // Clear the form
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => setFormStatus('idle'), 3000); 
-    }
-  };
 
   // Live Stats Fetching Effect
  // Live Stats Fetching Effect
@@ -250,6 +249,27 @@ function App() {
   // Contact Form States
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
+  const handleSendMessage = async (e) => {
+    e.preventDefault(); // Prevents the page from refreshing
+    setFormStatus('submitting');
+
+    const { error } = await supabase
+      .from('messages')
+      .insert([
+        { name: formData.name, email: formData.email, message: formData.message }
+      ]);
+
+    if (error) {
+      console.error("Error sending message:", error);
+      setFormStatus('error');
+    } else {
+      setFormStatus('success');
+      setFormData({ name: '', email: '', message: '' }); // Clear the form
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => setFormStatus('idle'), 3000); 
+    }
+  };
 
   // Handle Form Input Changes
   const handleInputChange = (e) => {
