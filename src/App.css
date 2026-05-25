@@ -58,7 +58,16 @@ h1, h2, h3, h4 {
     -2px -2px 5px rgba(255, 255, 255, 0.05),
     inset 0 0 0 2px #333;
   position: relative;
-  cursor: ns-resize; /* Indicates up/down dragging */
+  cursor: grab;
+  
+  /* CRITICAL MOBILE FIXES */
+  touch-action: none; /* Physically stops the browser from scrolling when touching this element */
+  -webkit-user-select: none; /* Stops Safari text selection */
+  user-select: none; /* Stops Chrome/Firefox text selection */
+}
+
+.hardware-dial:active {
+  cursor: grabbing;
 }
 
 .dial-indicator {
@@ -1145,44 +1154,74 @@ footer {
 /* =========================================
    THEME DIAL MASTER OVERRIDE
    ========================================= */
+/* =========================================
+   THEME DIAL MASTER OVERRIDE (UPDATED)
+   ========================================= */
 :root {
-  /* Assembles the raw percentages from the React dial into actual colors */
   --theme-bg: hsl(var(--base-hue), var(--base-sat), var(--bg-lightness));
   --theme-text: hsl(var(--base-hue), var(--base-sat), var(--text-lightness));
   --theme-container: hsl(var(--base-hue), var(--base-sat), var(--container-lightness));
   --theme-border: hsl(var(--base-hue), var(--base-sat), var(--border-lightness));
+  
+  /* NEW: Adaptive Accent Color. 
+     Shifts from bright blue in dark mode, to dark blue/black in light mode */
+  --theme-accent: hsl(220, 80%, calc(var(--text-lightness) - 15%)); 
 }
 
-/* 1. Force the main background and text to obey the dial */
+/* 1. Main Backgrounds & Text */
 body, .app-container {
   background-color: var(--theme-bg) !important;
   color: var(--theme-text) !important;
   transition: background-color 0.1s ease, color 0.1s ease;
 }
 
-/* 2. Force all text to adapt to the light/dark contrast */
-h1, h2, h3, h4, p, .section-title, .hero-text h1, .cert-details h4, .stat-number {
+/* 2. All Headings & Primary Text (White to Black) */
+h1, h2, h3, h4, p, .section-title, .hero-text h1, .cert-details h4, .stat-number, .chatbot-header h4 {
   color: var(--theme-text) !important;
 }
 
-/* Make secondary text slightly faded but still readable */
-.project-desc, .skill-desc, .achievement-desc, .cert-details p, .timeline-content .edu-desc, .contact-subtitle {
+/* 3. Secondary/Faded Text */
+.project-desc, .skill-desc, .achievement-desc, .cert-details p, .timeline-content .edu-desc, .contact-subtitle, .footer-content p, .learning-label, .hero-text h3 {
   color: var(--theme-text) !important;
   opacity: 0.8 !important;
 }
 
-/* 3. Force all cards and boxes to adapt */
-.about-content, 
-.skill-description-card, 
-.achievement-card, 
-.project-card, 
-.cert-card, 
-.timeline-content, 
-.contact-dashboard,
-.stat-card,
-.stats-dashboard,
-.ide-sidebar {
+/* 4. Containers & Cards */
+.about-content, .skill-description-card, .achievement-card, .project-card, .cert-card, .timeline-content, .contact-dashboard, .stat-card, .stats-dashboard, .ide-sidebar, .chatbot-window, .chatbot-header, .chatbot-input-area {
   background-color: var(--theme-container) !important;
   border-color: var(--theme-border) !important;
-  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+/* 5. FIX FOR BUTTONS (White/Black adapting borders) */
+.btn-primary, .btn-secondary, .btn-outline, .btn-success, .btn-danger, .chatbot-toggle {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-text) !important;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-outline:hover, .chatbot-toggle:hover {
+  background-color: var(--theme-text) !important;
+  color: var(--theme-bg) !important; /* Inverts on hover! */
+}
+
+/* 6. FIX FOR TAGS & BADGES (Blue to Dark Blue text) */
+.tag, .tag-badge, .award-badge, .date {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-accent) !important;
+  border: 1px solid var(--theme-accent) !important;
+}
+
+/* 7. FIX FOR THE "LAST LINE" (Footer) */
+footer, .navbar {
+  background-color: var(--theme-bg) !important;
+  border-top-color: var(--theme-border) !important;
+  border-bottom-color: var(--theme-border) !important;
+}
+
+/* 8. AUTO-INVERT ICONS */
+/* This math automatically turns your white GitHub/LinkedIn icons black when the background turns white! */
+.stat-icon-img, .footer-custom-icon {
+  filter: invert(calc(100% - var(--text-lightness))) !important; 
+  transition: filter 0.1s ease;
 }

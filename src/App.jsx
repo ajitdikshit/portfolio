@@ -296,65 +296,103 @@ const AdminPanel = () => {
 
 const ThemeDial = () => {
   const [isDragging, setIsDragging] = useState(false);
-  const [themeValue, setThemeValue] = useState(0); // 0 (Pitch Dark) to 100 (Bright Light)
-  const dragStartY = useRef(0);
-  const dragStartValue = useRef(0);
+  const [themeValue, setThemeValue] = useState(0); 
+  
+  const dialRef = useRef(null);
+  const centerRef = useRef({ x: 0, y: 0 });
+  const lastAngleRef = useRef(0);
+  const rotationRef = useRef(-135); // Start at pitch black (-135 degrees)
 
-  const handleMouseDown = (e) => {
+  const handleStart = (e) => {
+    // Prevent default touch behaviors if possible
+    if (e.cancelable) e.preventDefault(); 
+
+    // Find the exact center pixel of the dial on the screen
+    const rect = dialRef.current.getBoundingClientRect();
+    centerRef.current = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    };
+
+    // Support both mouse clicks and mobile screen touches
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    // Calculate initial starting angle
+    lastAngleRef.current = Math.atan2(clientY - centerRef.current.y, clientX - centerRef.current.x) * (180 / Math.PI);
     setIsDragging(true);
-    dragStartY.current = e.clientY;
-    dragStartValue.current = themeValue;
   };
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMove = (e) => {
       if (!isDragging) return;
-      
-      // Calculate how far the mouse moved up or down
-      const deltaY = dragStartY.current - e.clientY; 
-      let newValue = dragStartValue.current + (deltaY * 0.6); // 0.6 controls rotation speed
-      
-      // Clamp the dial between 0 and 100
-      if (newValue < 0) newValue = 0;
-      if (newValue > 100) newValue = 100;
-      
+      e.preventDefault(); // Completely locks the screen from scrolling while turning
+
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+      // Calculate new angle based on finger position
+      const currentAngle = Math.atan2(clientY - centerRef.current.y, clientX - centerRef.current.x) * (180 / Math.PI);
+      let deltaAngle = currentAngle - lastAngleRef.current;
+
+      // Smooth out the math when crossing the 180 / -180 degree boundary
+      if (deltaAngle > 180) deltaAngle -= 360;
+      if (deltaAngle < -180) deltaAngle += 360;
+
+      let newRotation = rotationRef.current + deltaAngle;
+
+      // Lock the steering wheel so it can't spin around endlessly (270 degree limit)
+      if (newRotation < -135) newRotation = -135;
+      if (newRotation > 135) newRotation = 135;
+
+      rotationRef.current = newRotation;
+      lastAngleRef.current = currentAngle;
+
+      // Convert the rotation (-135 to 135) into our 0 to 100 percentage
+      const newValue = ((newRotation + 135) / 270) * 100;
       setThemeValue(newValue);
-      
-      // Math: Convert the 0-100 value into a percentage (0.0 to 1.0)
+
+      // Inject the math into the CSS
       const p = newValue / 100;
       const root = document.documentElement;
-      
-      // Dynamically inject the Lightness percentages into the CSS Root
-      root.style.setProperty('--bg-lightness', `${5 + (90 * p)}%`);         // 5% to 95%
-      root.style.setProperty('--text-lightness', `${95 - (85 * p)}%`);       // 95% to 10%
-      root.style.setProperty('--container-lightness', `${11 + (80 * p)}%`);  // 11% to 91%
-      root.style.setProperty('--border-lightness', `${20 + (60 * p)}%`);     // 20% to 80%
+      root.style.setProperty('--bg-lightness', `${5 + (90 * p)}%`);
+      root.style.setProperty('--text-lightness', `${95 - (85 * p)}%`);
+      root.style.setProperty('--container-lightness', `${11 + (80 * p)}%`);
+      root.style.setProperty('--border-lightness', `${20 + (60 * p)}%`);
     };
 
-    const handleMouseUp = () => setIsDragging(false);
+    const handleEnd = () => setIsDragging(false);
 
     if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      // The { passive: false } is CRITICAL for mobile Safari/Chrome to allow e.preventDefault()
+      window.addEventListener('mousemove', handleMove, { passive: false });
+      window.addEventListener('touchmove', handleMove, { passive: false });
+      window.addEventListener('mouseup', handleEnd);
+      window.addEventListener('touchend', handleEnd);
+      
+      // Tell the browser to stop trying to highlight text while dragging
+      document.body.style.userSelect = 'none'; 
+    } else {
+      document.body.style.userSelect = ''; // Restore normal behavior when done
     }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('touchmove', handleMove);
+      window.removeEventListener('mouseup', handleEnd);
+      window.removeEventListener('touchend', handleEnd);
     };
   }, [isDragging]);
-
-  // Convert the 0-100 value into degrees for the CSS transform. 
-  // A standard hardware knob sweeps 270 degrees (-135deg to +135deg)
-  const rotationDeg = -135 + (themeValue * 2.7);
 
   return (
     <div className="theme-dial-wrapper">
       <div 
+        ref={dialRef}
         className="hardware-dial"
-        onMouseDown={handleMouseDown}
-        style={{ transform: `rotate(${rotationDeg}deg)` }}
-        title="Drag up and down to change time of day"
+        onMouseDown={handleStart}
+        onTouchStart={handleStart}
+        style={{ transform: `rotate(${rotationRef.current}deg)` }}
+        title="Turn like a knob to change time of day"
       >
         <div className="dial-indicator"></div>
       </div>
